@@ -326,18 +326,18 @@ function Header() {
                       <span>Category</span>
                     </Link>
                   </li>
-                  <li className="nav-item">
+                  {/* <li className="nav-item">
                     <Link to="/SubCategory" className="nav-link menu-link">
                       <i className="ri-layout-3-line"></i>
                       <span>SubCategory</span>
                     </Link>
-                  </li>
-                  <li className="nav-item">
+                  </li> */}
+                  {/* <li className="nav-item">
                     <Link to="/AddOns" className="nav-link menu-link">
                       <i className="ri-layout-3-line"></i>
                       <span>Add on</span>
                     </Link>
-                  </li>
+                  </li> */}
                   <li className="nav-item">
                     <Link
                       className="nav-link menu-link"

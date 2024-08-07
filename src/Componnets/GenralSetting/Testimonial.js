@@ -2,13 +2,20 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { Baseurl } from "../../config";
-
 import Swal from "sweetalert2";
 
 function Testimonial() {
   const [modalVisible, setModalVisible] = useState(false);
   const [testimonials, setTestimonials] = useState([]);
-  // Function to handle showing the modal
+  const [name, setName] = useState("");
+  const [rating, setRating] = useState("");
+  const [email, setEmail] = useState("");
+  const [photoUrl, setPhotoUrl] = useState("");
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [messageError, setMessageError] = useState("");
+
+  // Fetch testimonials
   useEffect(() => {
     const fetchTestimonials = async () => {
       try {
@@ -22,13 +29,13 @@ function Testimonial() {
         setTestimonials(data.data); // Assuming response.data is an array of testimonials
       } catch (error) {
         console.error("Error fetching testimonials:", error);
-        // Handle error (show error message, retry logic, etc.)
       }
     };
 
     fetchTestimonials();
   }, []);
-  console.log(testimonials);
+
+  // Handle showing modal
   const handleAddClick = () => {
     setModalVisible(true);
   };
@@ -36,19 +43,32 @@ function Testimonial() {
   const handleCloseModal = () => {
     setModalVisible(false);
   };
-  const [name, setName] = useState("");
-  const [rating, setRating] = useState("");
-  const [email, setEmail] = useState("");
-  const [photoUrl, setPhotoUrl] = useState("");
-  const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
 
+  // Handle file input change
   const handlePhotoUrlChange = (e) => {
     setPhotoUrl(e.target.files[0]);
   };
 
+  // Handle message change and validation
+  const handleMessageChange = (e) => {
+    const value = e.target.value;
+    setMessage(value);
+
+    if (value.length < 200) {
+      setMessageError("Message must be at least 200 characters long.");
+    } else {
+      setMessageError("");
+    }
+  };
+
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (message.length < 200) {
+      setMessageError("Message must be at least 200 characters long.");
+      return;
+    }
 
     const formData = new FormData();
     formData.append("name", name);
@@ -111,6 +131,8 @@ function Testimonial() {
       setLoading(false); // Stop loader
     }
   };
+
+  // Handle testimonial deletion
   const deleteTestimonial = async (id) => {
     try {
       const result = await Swal.fire({
@@ -137,6 +159,10 @@ function Testimonial() {
         }
 
         // After successful deletion, fetch testimonials again to update the list
+        const updatedTestimonials = testimonials.filter(
+          (test) => test._id !== id
+        );
+        setTestimonials(updatedTestimonials);
 
         // Show success message
         Swal.fire("Deleted!", "Your testimonial has been deleted.", "success");
@@ -146,6 +172,7 @@ function Testimonial() {
       Swal.fire("Error", "Failed to delete testimonial.", "error");
     }
   };
+
   return (
     <>
       <ToastContainer />
@@ -207,8 +234,7 @@ function Testimonial() {
                         <tr>
                           <th scope="col">No</th>
                           <th scope="col">Customer Email</th>
-                          <th scope="col"> Name</th>
-                          <th scope="col"> Message</th>
+                          <th scope="col">Name</th>
                           <th scope="col">Rating</th>
                           <th scope="col">Action</th>
                         </tr>
@@ -219,9 +245,7 @@ function Testimonial() {
                             <th scope="row">{index + 1}</th>
                             <td>{test.email}</td>
                             <td>{test.name}</td>
-                            <td> {test.message}</td>
                             <td>{test.rating}</td>
-
                             <td>
                               <div className="hstack gap-3 flex-wrap">
                                 <Link
@@ -240,6 +264,7 @@ function Testimonial() {
                 </div>
               </div>
             </div>
+
             {modalVisible && (
               <div
                 className="modal fade show"
@@ -260,110 +285,125 @@ function Testimonial() {
                       <button
                         type="button"
                         className="btn-close"
-                        aria-label="Close"
                         onClick={handleCloseModal}
+                        aria-label="Close"
                       ></button>
                     </div>
-                    <form className="tablelist-form" onSubmit={handleSubmit}>
+                    <form onSubmit={handleSubmit}>
                       <div className="modal-body">
-                        <input type="hidden" id="id-field" />
                         <div className="mb-3">
                           <label
                             htmlFor="customername-field"
                             className="form-label"
                           >
-                            name
+                            Name
                           </label>
                           <input
                             type="text"
                             id="customername-field"
                             className="form-control"
-                            placeholder="Enter Title"
-                            required=""
+                            placeholder="Enter customer name"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
+                            required
                           />
-                          <div className="invalid-feedback">
-                            Please enter a coupon name.
-                          </div>
                         </div>
                         <div className="mb-3">
-                          <label htmlFor="email-field" className="form-label">
-                            rating
-                          </label>
-                          <input
-                            type="number"
-                            id="email-field"
-                            className="form-control"
-                            placeholder="Enter code"
-                            required=""
-                            value={rating}
-                            onChange={(e) => setRating(e.target.value)}
-                          />
-                          <div className="invalid-feedback">
-                            Please enter a tax.
-                          </div>
-                        </div>
-                        <div className="mb-3">
-                          <label htmlFor="email-field" className="form-label">
-                            email
+                          <label
+                            htmlFor="customeremail-field"
+                            className="form-label"
+                          >
+                            Email
                           </label>
                           <input
                             type="email"
-                            id="email-field"
+                            id="customeremail-field"
                             className="form-control"
-                            placeholder="Enter email"
-                            required=""
+                            placeholder="Enter customer email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            required
                           />
-                          <div className="invalid-feedback">
-                            Please enter a email.
-                          </div>
                         </div>
                         <div className="mb-3">
-                          <label htmlFor="email-field" className="form-label">
-                            photoUrl
+                          <label htmlFor="rating-field" className="form-label">
+                            Rating
+                          </label>
+                          <input
+                            type="number"
+                            id="rating-field"
+                            className="form-control"
+                            placeholder="Enter rating"
+                            value={rating}
+                            onChange={(e) => setRating(e.target.value)}
+                            required
+                            min="1"
+                            max="5"
+                          />
+                        </div>
+                        <div className="mb-3">
+                          <label
+                            htmlFor="photourl-field"
+                            className="form-label"
+                          >
+                            Photo URL
                           </label>
                           <input
                             type="file"
-                            id="email-field"
+                            id="photourl-field"
                             className="form-control"
-                            placeholder="Enter Discount"
-                            required=""
                             onChange={handlePhotoUrlChange}
+                            required
                           />
-                          <div className="invalid-feedback">
-                            Please enter a photoUrl.
-                          </div>
                         </div>
-                        <div>
-                          <label htmlFor="status-field" className="form-label">
-                            message
+                        <div className="mb-3">
+                          <label htmlFor="message-field" className="form-label">
+                            Message
                           </label>
                           <textarea
+                            id="message-field"
                             className="form-control"
-                            name="status-field"
-                            id="status-field"
-                            required=""
+                            placeholder="Enter testimonial message"
                             value={message}
-                            onChange={(e) => setMessage(e.target.value)}
-                          ></textarea>
+                            onChange={handleMessageChange}
+                            required
+                            minLength="200" // Set minimum length here
+                            maxLength="250" // Set maximum length here
+                          />
+                          <div className="form-text">
+                            {message.length}/250 characters
+                            {messageError && (
+                              <div className="text-danger">{messageError}</div>
+                            )}
+                          </div>
                         </div>
                       </div>
                       <div className="modal-footer">
-                        <div className="hstack gap-2 justify-content-end">
-                          <button
-                            type="submit"
-                            className="btn btn-primary"
-                            disabled={loading}
-                          >
-                            {loading && (
-                              <span className="spinner-border spinner-border-sm me-1"></span>
-                            )}
-                            {loading ? "Loading..." : "Submit"}
-                          </button>
-                        </div>
+                        <button
+                          type="button"
+                          className="btn btn-light"
+                          onClick={handleCloseModal}
+                        >
+                          Close
+                        </button>
+                        <button
+                          type="submit"
+                          className="btn btn-primary"
+                          disabled={loading}
+                        >
+                          {loading ? (
+                            <div
+                              className="spinner-border spinner-border-sm"
+                              role="status"
+                            >
+                              <span className="visually-hidden">
+                                Loading...
+                              </span>
+                            </div>
+                          ) : (
+                            "Submit"
+                          )}
+                        </button>
                       </div>
                     </form>
                   </div>

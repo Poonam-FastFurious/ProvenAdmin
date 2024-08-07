@@ -6,12 +6,11 @@ import axios from "axios";
 import { Baseurl } from "../../config";
 import { toast } from "react-toastify";
 
-
 function EditProduct() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [category, setCategory] = useState([]);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const [productData, setProductData] = useState(null);
   const [description, setDescription] = useState("");
@@ -49,9 +48,9 @@ function EditProduct() {
       img.onload = () => {
         if (img.width === 1280 && img.height === 1280) {
           setImagePreview(URL.createObjectURL(file));
-          setError('');
+          setError("");
         } else {
-          setError('Please upload an image of size 1280x1280 pixels.');
+          setError("Please upload an image of size 1280x1280 pixels.");
         }
       };
       img.src = URL.createObjectURL(file);
@@ -61,7 +60,7 @@ function EditProduct() {
   const handleThumbnailChange = (e) => {
     const files = Array.from(e.target.files);
     const validFiles = [];
-    let errorMessage = '';
+    let errorMessage = "";
 
     files.forEach((file) => {
       const img = new Image();
@@ -69,13 +68,14 @@ function EditProduct() {
         if (img.width === 1280 && img.height === 1280) {
           validFiles.push(URL.createObjectURL(file));
         } else {
-          errorMessage = 'One or more thumbnails do not meet the 1280x1280 size requirement.';
+          errorMessage =
+            "One or more thumbnails do not meet the 1280x1280 size requirement.";
         }
 
         // Update state after processing all files
         if (validFiles.length === files.length) {
           setThumbnailPreviews(validFiles);
-          setError('');
+          setError("");
         } else {
           setError(errorMessage);
         }
@@ -83,7 +83,6 @@ function EditProduct() {
       img.src = URL.createObjectURL(file);
     });
   };
-
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
@@ -94,11 +93,17 @@ function EditProduct() {
     formData.append("description", description);
     formData.append("stocks", event.target.stocks?.value || 0);
     formData.append("price", event.target.price?.value || 0);
-    formData.append("youtubeVideoLink", event.target.youtubeVideoLink?.value || "");
+    formData.append(
+      "youtubeVideoLink",
+      event.target.youtubeVideoLink?.value || ""
+    );
     formData.append("discount", event.target.discount?.value || 0);
-    formData.append("shortDescription", event.target.shortDescription?.value || "");
+    formData.append(
+      "shortDescription",
+      event.target.shortDescription?.value || ""
+    );
     formData.append("cutPrice", event.target.cutPrice?.value || 0);
-    formData.append("category", event.target.category?.value || "");
+    formData.append("categories", event.target.categories?.value || "");
 
     const imageInput = document.getElementById("product-image-input");
     if (imageInput.files.length > 0) {
@@ -135,7 +140,6 @@ function EditProduct() {
         console.error("There was an error updating the product!", error);
       });
   };
-
 
   if (!productData) {
     return <div>Loading...</div>;
@@ -242,7 +246,6 @@ function EditProduct() {
                                 data-bs-toggle="tooltip"
                                 data-bs-placement="right"
                                 title="Select Image"
-
                               >
                                 <div className="avatar-xs">
                                   <div className="avatar-title bg-light border rounded-circle text-muted cursor-pointer">
@@ -257,7 +260,9 @@ function EditProduct() {
                                 accept="image/png, image/gif, image/jpeg"
                                 onChange={handleImageChange}
                               />
-                              {error && <div style={{ color: 'red' }}>{error}</div>}
+                              {error && (
+                                <div style={{ color: "red" }}>{error}</div>
+                              )}
                             </div>
                             {productData.image && (
                               <ul
@@ -274,7 +279,10 @@ function EditProduct() {
                                               <img
                                                 src={imagePreview}
                                                 alt="Selected"
-                                                style={{ width: "300px", height: "auto" }}
+                                                style={{
+                                                  width: "300px",
+                                                  height: "auto",
+                                                }}
                                                 className="img-fluid rounded d-block"
                                               />
                                             </div>
@@ -332,7 +340,10 @@ function EditProduct() {
                                 type="file"
                                 multiple
                                 onChange={handleThumbnailChange}
-                              /> {error && <div style={{ color: 'red' }}>{error}</div>}
+                              />{" "}
+                              {error && (
+                                <div style={{ color: "red" }}>{error}</div>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -342,7 +353,11 @@ function EditProduct() {
                             id="gallery-preview"
                           >
                             {thumbnailPreviews.map((file, index) => (
-                              <li key={index} className="mt-2" id="gallery-preview-list">
+                              <li
+                                key={index}
+                                className="mt-2"
+                                id="gallery-preview-list"
+                              >
                                 <div className="border rounded">
                                   <div className="d-flex p-2">
                                     <img
@@ -354,7 +369,6 @@ function EditProduct() {
                                 </div>
                               </li>
                             ))}
-
                           </ul>
                         )}
                       </div>
@@ -369,16 +383,11 @@ function EditProduct() {
                         <div className="flex-grow-1">
                           <input
                             className={`form-control `}
-
                             placeholder="Enter Url"
                             type="text"
                             name="youtubeVideoLink"
                             defaultValue={productData.youtubeVideoLink}
-
-
                           />
-
-
                         </div>
                       </div>
                     </div>
@@ -412,10 +421,11 @@ function EditProduct() {
                           <div className="row">
                             <div className="col-lg-3 col-sm-6">
                               <div className="mb-3">
-                                <label className="form-label">Product Category</label>
+                                <label className="form-label">
+                                  Product Category
+                                </label>
                                 <select
                                   className={`form-select `}
-
                                   id="choices-category-input"
                                   name="categories"
                                   defaultValue={productData.categories}
@@ -425,62 +435,56 @@ function EditProduct() {
                                 >
                                   <option>select </option>
                                   {category.map((cat) => (
-                                    <option key={cat._id} value={cat.categoriesTitle}>
+                                    <option
+                                      key={cat._id}
+                                      value={cat.categoriesTitle}
+                                    >
                                       {cat.categoriesTitle}
                                     </option>
                                   ))}
                                 </select>
-
-
                               </div>
                             </div>
                             <div className="col-lg-3 col-sm-6">
                               <div className="mb-3">
-                                <label className="form-label">Product Tags</label>
+                                <label className="form-label">
+                                  Product Tags
+                                </label>
                                 <input
                                   type="text"
                                   className={`form-control `}
-
                                   placeholder="Enter tags"
                                   name="tags"
                                   defaultValue={productData.tags}
-
-
                                 />
-
                               </div>
                             </div>
                             <div className="col-lg-3 col-sm-6">
                               <div className="mb-3">
-                                <label className="form-label">Product Price</label>
+                                <label className="form-label">
+                                  Product Price
+                                </label>
                                 <input
                                   type="number"
                                   className={`form-control `}
-
                                   placeholder="Enter price"
                                   name="price"
                                   defaultValue={productData.price}
-
                                 />
-
-
                               </div>
                             </div>
                             <div className="col-lg-3 col-sm-6">
                               <div className="mb-3">
-                                <label className="form-label">Product Discount</label>
+                                <label className="form-label">
+                                  Product Discount
+                                </label>
                                 <input
                                   type="number"
                                   className={`form-control `}
-
                                   placeholder="Enter discount"
                                   name="discount"
                                   defaultValue={productData.discount}
-
-
                                 />
-
-
                               </div>
                             </div>
                             <div className="col-lg-3 col-sm-6">
@@ -489,31 +493,24 @@ function EditProduct() {
                                 <input
                                   type="number"
                                   className={`form-control `}
-
                                   placeholder="Enter cut price"
                                   name="cutPrice"
                                   defaultValue={productData.cutPrice}
-
-
                                 />
-
-
                               </div>
                             </div>
                             <div className="col-lg-3 col-sm-6">
                               <div className="mb-3">
-                                <label className="form-label">Product SKU</label>
+                                <label className="form-label">
+                                  Product SKU
+                                </label>
                                 <input
                                   type="text"
                                   className={`form-control `}
-
                                   placeholder="Enter SKU"
                                   name="sku"
                                   defaultValue={productData.sku}
-
-
                                 />
-
                               </div>
                             </div>
                             <div className="col-lg-3 col-sm-6">
@@ -522,32 +519,24 @@ function EditProduct() {
                                 <input
                                   type="number"
                                   className={`form-control `}
-
                                   placeholder="Enter stocks quantity"
                                   name="stocks"
                                   defaultValue={productData.stocks}
-
-
                                 />
-
-
                               </div>
                             </div>
                             <div className="col-lg-12">
                               <div className="mb-3">
-                                <label className="form-label">Short Description</label>
+                                <label className="form-label">
+                                  Short Description
+                                </label>
                                 <textarea
                                   type="text"
                                   className={`form-control `}
-
                                   placeholder="Enter short description"
                                   name="shortDescription"
                                   defaultValue={productData.shortDescription}
-
-
                                 />
-
-
                               </div>
                             </div>
                           </div>
@@ -562,8 +551,6 @@ function EditProduct() {
                     </button>
                   </div>
                 </div>
-
-
               </div>
             </form>
           </div>
