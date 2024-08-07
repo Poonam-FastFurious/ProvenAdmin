@@ -233,7 +233,7 @@ function ResetPassword() {
 
                 <div className="mt-4 text-center">
                   <p className="mb-0">
-                    Wait, I remember my password...{" "}
+                    Wait, I remember my password...
                     <a
                       href="/Admin/Login"
                       className="fw-semibold text-primary text-decoration-underline"

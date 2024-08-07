@@ -334,7 +334,7 @@ function Dashboard() {
                           <div className="table-responsive table-card">
                             <table className="table table-hover table-centered align-middle table-nowrap mb-0">
                               <tbody>
-                                {products.map((item, index) => (
+                                {products.slice(0, 5).map((item, index) => (
                                   <tr key={index}>
                                     <td>
                                       <div className="d-flex align-items-center">
