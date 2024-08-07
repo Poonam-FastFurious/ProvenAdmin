@@ -167,10 +167,6 @@ function ResetPassword() {
                               <i className="ri-eye-fill align-middle"></i>
                             </button>
                           </div>
-                          <div id="passwordInput" className="form-text">
-                            Must be at least 8 characters, include a lowercase
-                            letter, an uppercase letter, and a number.
-                          </div>
                         </div>
 
                         <div className="mb-3">
@@ -220,20 +216,6 @@ function ResetPassword() {
                           <p id="pass-number" className="invalid fs-12 mb-0">
                             A least <b>number</b> (0-9)
                           </p>
-                        </div>
-
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            id="auth-remember-check"
-                          />
-                          <label
-                            className="form-check-label"
-                            htmlFor="auth-remember-check"
-                          >
-                            Remember me
-                          </label>
                         </div>
 
                         <div className="mt-4">
