@@ -88,7 +88,7 @@ function OrderDetail() {
                                 <div className="d-flex">
                                   <div className="flex-shrink-0 avatar-md bg-light rounded p-1">
                                     {product.product &&
-                                      product.product.image ? (
+                                    product.product.image ? (
                                       <img
                                         src={product.product.image}
                                         alt=""
@@ -312,7 +312,7 @@ function OrderDetail() {
               </div>
 
               <div className="col-xl-3">
-                <div className="card">
+                {/* <div className="card">
                   <div className="card-header">
                     <div className="d-flex">
                       <h5 className="card-title flex-grow-1 mb-0">
@@ -345,7 +345,7 @@ function OrderDetail() {
                       </p>
                     </div>
                   </div>
-                </div>
+                </div> */}
 
                 <div className="card">
                   <div className="card-header">
@@ -397,10 +397,17 @@ function OrderDetail() {
                   </div>
                   <div className="card-body">
                     <ul className="list-unstyled vstack gap-2 fs-13 mb-0">
-                      <li className="fw-medium fs-14">Joseph Parker</li>
-                      <li>{orderData.shippingInfo.address}</li>
-                      <li>{orderData.shippingInfo.country}</li>
-
+                      <li className="fw-medium fs-14">
+                        {" "}
+                        {orderData.customer.fullName}
+                      </li>
+                      {/* <li>{orderData.shippingInfo.address}</li>
+                      <li>{orderData.shippingInfo.country}</li> */}
+                      {orderData.shippingInfo.address?.streetAddress} <br />
+                      {orderData.shippingInfo.address?.city} <br />
+                      {orderData.shippingInfo.address?.state} <br />
+                      {orderData.shippingInfo.address?.postalCode} <br />
+                      {orderData.shippingInfo.address?.addressType} <br />
                     </ul>
                   </div>
                 </div>

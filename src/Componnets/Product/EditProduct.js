@@ -16,7 +16,9 @@ function EditProduct() {
   const [description, setDescription] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
   const [thumbnailPreviews, setThumbnailPreviews] = useState([]);
-
+  const [discount, setDiscount] = useState(); // State for calculated discount
+  const [price, setPrice] = useState();
+  const [cutPrice, setCutPrice] = useState();
   useEffect(() => {
     fetch(Baseurl + "/api/v1/category/allcategory")
       .then((response) => response.json())
@@ -83,6 +85,23 @@ function EditProduct() {
       img.src = URL.createObjectURL(file);
     });
   };
+  const calculateDiscount = (price, cutPrice) => {
+    const calculatedDiscount =
+      cutPrice > 0 ? ((cutPrice - price) / cutPrice) * 100 : 0;
+    setDiscount(calculatedDiscount.toFixed(2));
+  };
+
+  const handlePriceChange = (e) => {
+    const newPrice = parseFloat(e.target.value) || 0;
+    setPrice(newPrice);
+    calculateDiscount(newPrice, cutPrice);
+  };
+
+  const handleCutPriceChange = (e) => {
+    const newCutPrice = parseFloat(e.target.value) || 0;
+    setCutPrice(newCutPrice);
+    calculateDiscount(price, newCutPrice);
+  };
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
@@ -92,17 +111,17 @@ function EditProduct() {
     formData.append("title", event.target.title?.value || "");
     formData.append("description", description);
     formData.append("stocks", event.target.stocks?.value || 0);
-    formData.append("price", event.target.price?.value || 0);
+    formData.append("price", price);
     formData.append(
       "youtubeVideoLink",
       event.target.youtubeVideoLink?.value || ""
     );
-    formData.append("discount", event.target.discount?.value || 0);
+    formData.append("discount", discount);
     formData.append(
       "shortDescription",
       event.target.shortDescription?.value || ""
     );
-    formData.append("cutPrice", event.target.cutPrice?.value || 0);
+    formData.append("cutPrice", cutPrice);
     formData.append("categories", event.target.categories?.value || "");
 
     const imageInput = document.getElementById("product-image-input");
@@ -432,6 +451,7 @@ function EditProduct() {
                                   //
                                   data-choices=""
                                   data-choices-search-false=""
+                                  required
                                 >
                                   <option>select </option>
                                   {category.map((cat) => (
@@ -461,6 +481,20 @@ function EditProduct() {
                             </div>
                             <div className="col-lg-3 col-sm-6">
                               <div className="mb-3">
+                                <label className="form-label">MRP</label>
+                                <input
+                                  type="number"
+                                  className={`form-control `}
+                                  placeholder="Enter cut price"
+                                  name="cutPrice"
+                                  value={cutPrice}
+                                  onChange={handleCutPriceChange}
+                                  required
+                                />
+                              </div>
+                            </div>
+                            <div className="col-lg-3 col-sm-6">
+                              <div className="mb-3">
                                 <label className="form-label">
                                   Product Price
                                 </label>
@@ -469,7 +503,9 @@ function EditProduct() {
                                   className={`form-control `}
                                   placeholder="Enter price"
                                   name="price"
-                                  defaultValue={productData.price}
+                                  value={price}
+                                  onChange={handlePriceChange}
+                                  required
                                 />
                               </div>
                             </div>
@@ -483,22 +519,12 @@ function EditProduct() {
                                   className={`form-control `}
                                   placeholder="Enter discount"
                                   name="discount"
-                                  defaultValue={productData.discount}
+                                  value={discount} // Show the computed discount
+                                  readOnly
                                 />
                               </div>
                             </div>
-                            <div className="col-lg-3 col-sm-6">
-                              <div className="mb-3">
-                                <label className="form-label">Cut Price</label>
-                                <input
-                                  type="number"
-                                  className={`form-control `}
-                                  placeholder="Enter cut price"
-                                  name="cutPrice"
-                                  defaultValue={productData.cutPrice}
-                                />
-                              </div>
-                            </div>
+
                             <div className="col-lg-3 col-sm-6">
                               <div className="mb-3">
                                 <label className="form-label">
@@ -510,6 +536,7 @@ function EditProduct() {
                                   placeholder="Enter SKU"
                                   name="sku"
                                   defaultValue={productData.sku}
+                                  required
                                 />
                               </div>
                             </div>
