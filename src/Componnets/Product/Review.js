@@ -82,17 +82,7 @@ function Review() {
                       </div>
                     </div>
                     <div className="col-sm">
-                      <div className="d-flex justify-content-sm-end">
-                        <div className="search-box ms-2">
-                          <Link
-                            to="/add-product"
-                            className="btn btn-success"
-                            id="addproduct-btn"
-                          >
-                            <i className="align-bottom me-1"></i> Back
-                          </Link>
-                        </div>
-                      </div>
+
                     </div>
                   </div>
                 </div>

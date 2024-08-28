@@ -97,13 +97,13 @@ function Order() {
         prevOrders.map((order) =>
           order._id === selectedOrder._id
             ? {
-                ...order,
-                status: newStatus,
-                shippingInfo: {
-                  ...order.shippingInfo,
-                  shippingLink: newShippingLink,
-                },
-              }
+              ...order,
+              status: newStatus,
+              shippingInfo: {
+                ...order.shippingInfo,
+                shippingLink: newShippingLink,
+              },
+            }
             : order
         )
       );
@@ -112,13 +112,13 @@ function Order() {
         prevOrders.map((order) =>
           order._id === selectedOrder._id
             ? {
-                ...order,
-                status: newStatus,
-                shippingInfo: {
-                  ...order.shippingInfo,
-                  shippingLink: newShippingLink,
-                },
-              }
+              ...order,
+              status: newStatus,
+              shippingInfo: {
+                ...order.shippingInfo,
+                shippingLink: newShippingLink,
+              },
+            }
             : order
         )
       );
@@ -186,9 +186,7 @@ function Order() {
                           Total Orders
                         </p>
                       </div>
-                      <div className="flex-shrink-0">
-                        <h5 className="text-success fs-14 mb-0">d</h5>
-                      </div>
+
                     </div>
                     <div className="d-flex align-items-end justify-content-between mt-4">
                       <div>
@@ -367,7 +365,7 @@ function Order() {
                           </div>
                         </div>
 
-                        <div className="col-xxl-2 col-sm-6">
+                        <div className="col-xxl-2 col-sm-6  d-hidden" style={{ visibility: "hidden" }}>
                           <div>
                             <input
                               type="date"
@@ -378,7 +376,7 @@ function Order() {
                           </div>
                         </div>
 
-                        <div className="col-xxl-1 col-sm-4">
+                        <div className="col-xxl-1 col-sm-4 " style={{ visibility: "hidden" }}>
                           <div>
                             <button
                               type="button"
@@ -604,9 +602,8 @@ function Order() {
                               <nav>
                                 <ul className="pagination">
                                   <li
-                                    className={`page-item ${
-                                      currentPage === 1 && "disabled"
-                                    }`}
+                                    className={`page-item ${currentPage === 1 && "disabled"
+                                      }`}
                                   >
                                     <button
                                       className="page-link"
@@ -624,9 +621,8 @@ function Order() {
                                     (_, i) => (
                                       <li
                                         key={i}
-                                        className={`page-item ${
-                                          currentPage === i + 1 && "active"
-                                        }`}
+                                        className={`page-item ${currentPage === i + 1 && "active"
+                                          }`}
                                       >
                                         <button
                                           className="page-link"
@@ -638,12 +634,11 @@ function Order() {
                                     )
                                   )}
                                   <li
-                                    className={`page-item ${
-                                      currentPage ===
-                                        Math.ceil(
-                                          orders.length / itemsPerPage
-                                        ) && "disabled"
-                                    }`}
+                                    className={`page-item ${currentPage ===
+                                      Math.ceil(
+                                        orders.length / itemsPerPage
+                                      ) && "disabled"
+                                      }`}
                                   >
                                     <button
                                       className="page-link"

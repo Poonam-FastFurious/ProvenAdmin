@@ -4,7 +4,8 @@ import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import axios from "axios";
 import { Baseurl } from "../../config";
-
+import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 function AddProduct() {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -40,12 +41,28 @@ function AddProduct() {
     fetchCategories();
   }, []);
 
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
+
+    setFormData((prevState) => {
+      const newState = { ...prevState, [name]: value };
+
+      if (name === "price" || name === "cutPrice") {
+        const price = parseFloat(newState.price) || 0;
+        const cutPrice = parseFloat(newState.cutPrice) || 0;
+
+        if (cutPrice > 0 && price > 0) {
+          const discount = ((cutPrice - price) / cutPrice) * 100;
+          newState.discount = discount.toFixed(2);
+        } else {
+          newState.discount = "";
+        }
+      }
+
+      return newState;
     });
+
     if (errors[name]) {
       setErrors({
         ...errors,
@@ -131,7 +148,12 @@ function AddProduct() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    if (!validateForm()) return;
+
+    if (!validateForm()) {
+      setLoading(false);
+      return;
+    }
+
     const data = new FormData();
     data.append("title", formData.title);
     data.append("description", formData.description);
@@ -145,6 +167,7 @@ function AddProduct() {
     data.append("stocks", formData.stocks);
     data.append("youtubeVideoLink", formData.youtubeVideoLink);
     data.append("image", formData.image);
+
     if (formData.thumbnail && formData.thumbnail.length > 0) {
       formData.thumbnail.forEach((thumbnail) => {
         data.append("thumbnail", thumbnail);
@@ -156,20 +179,27 @@ function AddProduct() {
         method: "POST",
         body: data,
       });
+
       const result = await response.json();
-      console.log(result);
+
       if (response.ok) {
+        toast.success("Product added successfully!");
         navigate("/Product");
       } else {
-        console.error("Network response was not ok");
-        // Handle response errors here
+        // Display the backend error message
+        toast.error(result.message || "An error occurred while adding the product.", {
+          position: "top-right",
+          autoClose: 5000,
+        });
       }
     } catch (error) {
-      console.error("Error adding product", error);
+      console.error("Error adding product:", error);
+      toast.error("An unexpected error occurred. Please try again later.");
     } finally {
       setLoading(false);
     }
   };
+
   return (
     <>
       <div className="main-content">
@@ -212,9 +242,8 @@ function AddProduct() {
                         </label>
                         <input
                           type="text"
-                          className={`form-control ${
-                            errors.title ? "is-invalid" : ""
-                          }`}
+                          className={`form-control ${errors.title ? "is-invalid" : ""
+                            }`}
                           id="product-title-input"
                           name="title"
                           value={formData.title}
@@ -264,9 +293,8 @@ function AddProduct() {
                               </div>
                             </label>
                             <input
-                              className={`form-control d-none ${
-                                errors.image ? "is-invalid" : ""
-                              }`}
+                              className={`form-control d-none ${errors.image ? "is-invalid" : ""
+                                }`}
                               id="product-image-input"
                               type="file"
                               accept="image/png, image/gif, image/jpeg"
@@ -347,9 +375,8 @@ function AddProduct() {
                               </div>
                             </label>
                             <input
-                              className={`form-control d-none ${
-                                errors.thumbnail ? "is-invalid" : ""
-                              }`}
+                              className={`form-control d-none ${errors.thumbnail ? "is-invalid" : ""
+                                }`}
                               id="product-thumbnail-input"
                               type="file"
                               multiple
@@ -377,7 +404,11 @@ function AddProduct() {
                                 <div className="border rounded">
                                   <div className="d-flex p-2">
                                     <img
-                                      src={file}
+                                      src={
+                                        file instanceof File
+                                          ? URL.createObjectURL(file)
+                                          : file
+                                      }
                                       alt={`Thumbnail ${index}`}
                                       style={{
                                         width: "100px",
@@ -401,9 +432,8 @@ function AddProduct() {
                       <div className="hstack gap-3 align-items-start">
                         <div className="flex-grow-1">
                           <input
-                            className={`form-control ${
-                              errors.youtubeVideoLink ? "is-invalid" : ""
-                            }`}
+                            className={`form-control ${errors.youtubeVideoLink ? "is-invalid" : ""
+                              }`}
                             placeholder="Enter Url"
                             type="text"
                             name="youtubeVideoLink"
@@ -452,9 +482,8 @@ function AddProduct() {
                                   Product Category
                                 </label>
                                 <select
-                                  className={`form-select ${
-                                    errors.categories ? "is-invalid" : ""
-                                  }`}
+                                  className={`form-select ${errors.categories ? "is-invalid" : ""
+                                    }`}
                                   id="choices-category-input"
                                   name="categories"
                                   value={formData.categories}
@@ -486,9 +515,8 @@ function AddProduct() {
                                 </label>
                                 <input
                                   type="text"
-                                  className={`form-control ${
-                                    errors.tags ? "is-invalid" : ""
-                                  }`}
+                                  className={`form-control ${errors.tags ? "is-invalid" : ""
+                                    }`}
                                   placeholder="Enter tags"
                                   name="tags"
                                   value={formData.tags}
@@ -503,14 +531,32 @@ function AddProduct() {
                             </div>
                             <div className="col-lg-3 col-sm-6">
                               <div className="mb-3">
+                                <label className="form-label">MRP</label>
+                                <input
+                                  type="number"
+                                  className={`form-control ${errors.cutPrice ? "is-invalid" : ""
+                                    }`}
+                                  placeholder="Enter cut price"
+                                  name="cutPrice"
+                                  value={formData.cutPrice}
+                                  onChange={handleChange}
+                                />
+                                {errors.cutPrice && (
+                                  <div className="invalid-feedback">
+                                    {errors.cutPrice}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                            <div className="col-lg-3 col-sm-6">
+                              <div className="mb-3">
                                 <label className="form-label">
                                   Product Price
                                 </label>
                                 <input
                                   type="number"
-                                  className={`form-control ${
-                                    errors.price ? "is-invalid" : ""
-                                  }`}
+                                  className={`form-control ${errors.price ? "is-invalid" : ""
+                                    }`}
                                   placeholder="Enter price"
                                   name="price"
                                   value={formData.price}
@@ -528,11 +574,10 @@ function AddProduct() {
                                 <label className="form-label">
                                   Product Discount
                                 </label>
-                                <input
+                                <input readOnly
                                   type="number"
-                                  className={`form-control ${
-                                    errors.discount ? "is-invalid" : ""
-                                  }`}
+                                  className={`form-control ${errors.discount ? "is-invalid" : ""
+                                    }`}
                                   placeholder="Enter discount"
                                   name="discount"
                                   value={formData.discount}
@@ -545,26 +590,7 @@ function AddProduct() {
                                 )}
                               </div>
                             </div>
-                            <div className="col-lg-3 col-sm-6">
-                              <div className="mb-3">
-                                <label className="form-label">Cut Price</label>
-                                <input
-                                  type="number"
-                                  className={`form-control ${
-                                    errors.cutPrice ? "is-invalid" : ""
-                                  }`}
-                                  placeholder="Enter cut price"
-                                  name="cutPrice"
-                                  value={formData.cutPrice}
-                                  onChange={handleChange}
-                                />
-                                {errors.cutPrice && (
-                                  <div className="invalid-feedback">
-                                    {errors.cutPrice}
-                                  </div>
-                                )}
-                              </div>
-                            </div>
+
                             <div className="col-lg-3 col-sm-6">
                               <div className="mb-3">
                                 <label className="form-label">
@@ -572,9 +598,8 @@ function AddProduct() {
                                 </label>
                                 <input
                                   type="text"
-                                  className={`form-control ${
-                                    errors.sku ? "is-invalid" : ""
-                                  }`}
+                                  className={`form-control ${errors.sku ? "is-invalid" : ""
+                                    }`}
                                   placeholder="Enter SKU"
                                   name="sku"
                                   value={formData.sku}
@@ -592,9 +617,8 @@ function AddProduct() {
                                 <label className="form-label">Stocks</label>
                                 <input
                                   type="number"
-                                  className={`form-control ${
-                                    errors.stocks ? "is-invalid" : ""
-                                  }`}
+                                  className={`form-control ${errors.stocks ? "is-invalid" : ""
+                                    }`}
                                   placeholder="Enter stocks quantity"
                                   name="stocks"
                                   value={formData.stocks}
@@ -614,9 +638,8 @@ function AddProduct() {
                                 </label>
                                 <textarea
                                   type="text"
-                                  className={`form-control ${
-                                    errors.shortDescription ? "is-invalid" : ""
-                                  }`}
+                                  className={`form-control ${errors.shortDescription ? "is-invalid" : ""
+                                    }`}
                                   placeholder="Enter short description"
                                   name="shortDescription"
                                   value={formData.shortDescription}

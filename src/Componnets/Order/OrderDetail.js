@@ -59,12 +59,12 @@ function OrderDetail() {
                       <h5 className="card-title flex-grow-1 mb-0">
                         Order #{orderData.orderID}
                       </h5>
-                      <div className="flex-shrink-0">
+                      {/* <div className="flex-shrink-0">
                         <Link to="#" className="btn btn-success btn-sm">
                           <i className="ri-download-2-fill align-middle me-1"></i>
                           Invoice
                         </Link>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                   <div className="card-body">
@@ -88,7 +88,7 @@ function OrderDetail() {
                                 <div className="d-flex">
                                   <div className="flex-shrink-0 avatar-md bg-light rounded p-1">
                                     {product.product &&
-                                    product.product.image ? (
+                                      product.product.image ? (
                                       <img
                                         src={product.product.image}
                                         alt=""
@@ -149,26 +149,9 @@ function OrderDetail() {
                                       Rs{orderData.totalAmount.toFixed(2)}
                                     </td>
                                   </tr>
-                                  <tr>
-                                    <td>
-                                      Discount{" "}
-                                      <span className="text-muted">
-                                        (PROVEN15)
-                                      </span>{" "}
-                                      :
-                                    </td>
-                                    <td className="text-end">-Rs53.99</td>
-                                  </tr>
-                                  <tr>
-                                    <td>Shipping Charge :</td>
-                                    <td className="text-end">Rs65.00</td>
-                                  </tr>
-                                  <tr>
-                                    <td>Estimated Tax :</td>
-                                    <td className="text-end">Rs44.99</td>
-                                  </tr>
+
                                   <tr className="border-top border-top-dashed">
-                                    <th scope="row">Total (USD) :</th>
+                                    <th scope="row">Total (INR) :</th>
                                     <th className="text-end">
                                       Rs{orderData.totalAmount.toFixed(2)}
                                     </th>
@@ -417,8 +400,7 @@ function OrderDetail() {
                       <li className="fw-medium fs-14">Joseph Parker</li>
                       <li>{orderData.shippingInfo.address}</li>
                       <li>{orderData.shippingInfo.country}</li>
-                      <li>California - 24567</li>
-                      <li>United States</li>
+
                     </ul>
                   </div>
                 </div>

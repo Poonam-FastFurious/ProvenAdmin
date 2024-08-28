@@ -30,6 +30,7 @@ function Listproduct() {
 
     fetchProducts();
   }, []);
+  console.log(products);
 
   // Function to handle search
   const handleSearch = (query) => {

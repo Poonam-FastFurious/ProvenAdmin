@@ -126,9 +126,8 @@ function Login() {
                           </label>
                           <input
                             type="text"
-                            className={`form-control ${
-                              validationError ? "is-invalid" : ""
-                            }`}
+                            className={`form-control ${validationError ? "is-invalid" : ""
+                              }`}
                             id="usernameOrEmail"
                             placeholder="Enter username or email"
                             value={usernameOrEmail}
@@ -168,9 +167,8 @@ function Login() {
                               onClick={togglePasswordVisibility}
                             >
                               <i
-                                className={`ri-${
-                                  showPassword ? "eye-off" : "eye"
-                                }-fill align-middle`}
+                                className={`ri-${showPassword ? "eye-off" : "eye"
+                                  }-fill align-middle`}
                               ></i>
                             </button>
                           </div>
@@ -240,3 +238,31 @@ function Login() {
 }
 
 export default Login;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

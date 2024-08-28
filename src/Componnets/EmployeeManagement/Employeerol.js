@@ -5,13 +5,13 @@ import Swal from "sweetalert2";
 import { Baseurl } from "../../config";
 
 function Employeerol() {
+  const [editingEmployeeId, setEditingEmployeeId] = useState(null);
   const [allemployee, setAllemployee] = useState([]);
   const [employeeData, setEmployeeData] = useState({
     name: "",
     email: "",
     mobileNumber: "",
     password: "",
-    image: null,
     employeeRole: "",
   });
 
@@ -121,13 +121,7 @@ function Employeerol() {
     });
   };
 
-  const handleImageChange = (event) => {
-    const file = event.target.files[0];
-    setEmployeeData({
-      ...employeeData,
-      image: file,
-    });
-  };
+
 
   const fetchEmployees = () => {
     fetch(Baseurl + "/api/v1/Employee/allEmployees")
@@ -135,27 +129,41 @@ function Employeerol() {
       .then((data) => setAllemployee(data.data))
       .catch((error) => console.error("Error fetching employees:", error));
   };
+  const openEditModal = (employeeId) => {
+    setEditingEmployeeId(employeeId);
+    const modalElement = document.getElementById("editshowModal");
+    const modal = window.bootstrap.Modal.getOrCreateInstance(modalElement);
+    modal.show();
+    // Open the modal (assuming Bootstrap modals are used)
 
+  };
   const handlePasswordUpdate = async (event, employeeId) => {
     event.preventDefault();
 
+    if (!employeeId) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Employee ID is required",
+        confirmButtonColor: "#dc3545",
+      });
+      return;
+    }
+
     try {
-      const response = await fetch(Baseurl + "/api/v1/Employee/update", {
+      const response = await fetch(`${Baseurl}/api/v1/Employee/update`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          id: employeeId,
+          employeeId: employeeId,
           password: employeeData.password,
         }),
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to update password");
-      }
+      if (!response.ok) throw new Error("Failed to update password");
 
-      // Handle success scenario
       Swal.fire({
         icon: "success",
         title: "Password updated successfully!",
@@ -163,25 +171,13 @@ function Employeerol() {
         timer: 1500,
       });
 
-      // Close modal
-      const modal = document.getElementById("editshowModal");
-      const modalBackdrop =
-        document.getElementsByClassName("modal-backdrop")[0];
-      modal.classList.remove("show");
-      modal.setAttribute("aria-hidden", "true");
-      modalBackdrop.remove();
-
-      // Optionally reset the form or update state as needed
-      setEmployeeData({
-        ...employeeData,
-        password: "", // Clear password field after update
-      });
-
-      // Fetch updated list of employees
+      setEmployeeData((prevData) => ({ ...prevData, password: "" }));
+      setEditingEmployeeId(null); // Reset employeeId state
+      const modalElement = document.getElementById("editshowModal");
+      const modal = window.bootstrap.Modal.getOrCreateInstance(modalElement);
+      modal.hide(); // Hide the modal
       fetchEmployees();
     } catch (error) {
-      console.error("Error updating password:", error);
-      // Handle error scenario
       Swal.fire({
         icon: "error",
         title: "Error",
@@ -190,6 +186,8 @@ function Employeerol() {
       });
     }
   };
+
+
 
   useEffect(() => {
     fetchEmployees();
@@ -312,9 +310,7 @@ function Employeerol() {
                                     <div class="edit">
                                       <button
                                         class="btn btn-sm btn-success edit-item-btn"
-                                        data-bs-toggle="modal"
-                                        id="create-btn"
-                                        data-bs-target="#editshowModal"
+                                        onClick={() => openEditModal(empl._id)}
                                       >
                                         Edit
                                       </button>
@@ -461,7 +457,7 @@ function Employeerol() {
                       />
                       <div class="invalid-feedback">Please enter an Link.</div>
                     </div>
-                    <div class="mb-3">
+                    {/* <div class="mb-3">
                       <label for="phone-field" class="form-label">
                         Image
                       </label>
@@ -474,7 +470,7 @@ function Employeerol() {
                         required
                       />
                       <div class="invalid-feedback">Please enter a image.</div>
-                    </div>
+                    </div> */}
                     <div class="mb-3">
                       <label for="date-field" class="form-label">
                         EmployeeRole
@@ -515,84 +511,41 @@ function Employeerol() {
               </div>
             </div>
           </div>
-          <div
-            class="modal fade"
-            id="editshowModal"
-            tabindex="-1"
-            aria-labelledby="exampleModalLabel"
-            aria-hidden="true"
-          >
+          <div class="modal fade" id="editshowModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
               <div class="modal-content">
                 <div class="modal-header bg-light p-3">
-                  <h5 class="modal-title" id="exampleModalLabel">
-                    Update Employee
-                  </h5>
-                  <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="modal"
-                    aria-label="Close"
-                    id="close-modal"
-                  ></button>
+                  <h5 class="modal-title" id="exampleModalLabel">Update Employee</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form class="tablelist-form" autocomplete="off">
+                <form class="tablelist-form" autocomplete="off" onSubmit={(event) => handlePasswordUpdate(event, editingEmployeeId)}>
                   <div class="modal-body">
-                    <div class="mb-3" id="modal-id" style={{ display: "none" }}>
-                      <label for="id-field" class="form-label">
-                        ID
-                      </label>
-                      <input
-                        type="text"
-                        id="id-field"
-                        class="form-control"
-                        placeholder="ID"
-                        readonly=""
-                      />
-                    </div>
                     <div class="mb-3">
-                      <label for="customername-field" class="form-label">
-                        New Password
-                      </label>
+                      <label for="customername-field" class="form-label">New Password</label>
                       <input
                         type="password"
                         id="customername-field"
                         class="form-control"
-                        placeholder="Enter Title"
+                        placeholder="Enter New Password"
                         name="password"
                         value={employeeData.password}
                         onChange={handleInputChange}
+                        required
                       />
-                      <div class="invalid-feedback">
-                        Please enter a password
-                      </div>
+                      <div class="invalid-feedback">Please enter a new password</div>
                     </div>
                   </div>
                   <div class="modal-footer">
                     <div class="hstack gap-2 justify-content-end">
-                      <button
-                        type="button"
-                        class="btn btn-light"
-                        data-bs-dismiss="modal"
-                      >
-                        Close
-                      </button>
-                      <button
-                        type="submit"
-                        class="btn btn-success"
-                        id="add-btn"
-                        onClick={(event) =>
-                          handlePasswordUpdate(event, employeeData._id)
-                        }
-                      >
-                        Update Employee
-                      </button>
+                      <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-success" id="add-btn">Update Password</button>
                     </div>
                   </div>
                 </form>
               </div>
             </div>
           </div>
+
         </div>
       </div>
     </>

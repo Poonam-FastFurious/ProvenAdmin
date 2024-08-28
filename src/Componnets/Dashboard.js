@@ -10,35 +10,49 @@ function Dashboard() {
   const [usercount, setusercount] = useState(0);
   const [fetching, setFetching] = useState(false);
   const [products, setProducts] = useState([]);
+  const [totalPayments, setTotalPayments] = useState([]);
   useEffect(() => {
-    // Fetch the products from the API
-    fetch(Baseurl + "/api/v1/Product/products")
-      .then((responce) => responce.json())
-      .then((data) => setProducts(data.data));
+    // Fetch data from both APIs
+    Promise.all([
+      fetch(Baseurl + "/api/v1/Product/products").then(response => response.json()),
+      fetch(Baseurl + "/api/v1/order/total-payments").then(response => response.json())
+    ])
+      .then(([productsData, paymentsData]) => {
+        setProducts(productsData.data);
+        setTotalPayments(paymentsData.totalAmount);
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
   }, []);
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setFetching(true);
 
-        //order fetch
+        // Order fetch
         const response = await fetch(Baseurl + "/api/v1/order/allorder");
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        setOrders(data.data);
-        setOrdersCount(data.data.length);
-        //userfetch
+        // Sort orders by date descending
+        const sortedOrders = data.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        setOrders(sortedOrders);
+        setOrdersCount(sortedOrders.length);
+
+        // User fetch
         const responseuser = await fetch(Baseurl + "/api/v1/user/alluser");
         if (!responseuser.ok) {
           throw new Error(`HTTP error! status: ${responseuser.status}`);
         }
-        const user = await responseuser.json();
-        setUser(user.data);
-        setusercount(user.data.length);
+        const userData = await responseuser.json();
+        // Sort users by date descending
+        const sortedUsers = userData.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        setUser(sortedUsers);
+        setusercount(sortedUsers.length);
       } catch (err) {
-        throw (new Error("data not fetch "), err);
+        console.error("Data not fetched", err);
       } finally {
         setFetching(false);
       }
@@ -64,27 +78,7 @@ function Dashboard() {
                             Here's what's happening with your store today.
                           </p>
                         </div>
-                        <div className="mt-3 mt-lg-0">
-                          <form>
-                            <div className="row g-3 mb-0 align-items-center">
-                              <div className="col-sm-auto">
-                                <div className="input-group">
-                                  <input
-                                    type="date"
-                                    className="form-control border-0 dash-filter-picker shadow"
-                                    data-provider="flatpickr"
-                                    data-range-date="true"
-                                    data-date-format="d M, Y"
-                                    data-deafult-date="01 Jan 2022 to 31 Jan 2022"
-                                  />
-                                  <div className="input-group-text bg-primary border-primary text-white">
-                                    <i className="ri-calendar-2-line"></i>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </form>
-                        </div>
+
                       </div>
                     </div>
                   </div>
@@ -108,9 +102,9 @@ function Dashboard() {
                                   className="counter-value"
                                   data-target="559.25"
                                 >
-                                  0
+                                  {totalPayments}
                                 </span>
-                                k
+
                               </h4>
                               <Link
                                 to=""
@@ -189,7 +183,7 @@ function Dashboard() {
                                 >
                                   {usercount}
                                 </span>
-                                M
+
                               </h4>
                               <Link
                                 to=""
@@ -223,14 +217,14 @@ function Dashboard() {
                           <div className="d-flex align-items-end justify-content-between mt-4">
                             <div>
                               <h4 className="fs-22 fw-semibold ff-secondary mb-4">
-                                $
+                                ₹
                                 <span
                                   className="counter-value"
                                   data-target="165.89"
                                 >
                                   0
                                 </span>
-                                k
+
                               </h4>
                               <Link
                                 to=""
@@ -300,13 +294,12 @@ function Dashboard() {
                                     </td>
                                     <td>
                                       <span
-                                        className={`badge ${
-                                          order.paymentStatus === "Paid"
-                                            ? "bg-success-subtle text-success"
-                                            : order.paymentStatus === "Pending"
+                                        className={`badge ${order.paymentStatus === "Paid"
+                                          ? "bg-success-subtle text-success"
+                                          : order.paymentStatus === "Pending"
                                             ? "bg-warning-subtle text-warning"
                                             : "bg-danger-subtle text-danger"
-                                        }`}
+                                          }`}
                                       >
                                         {order.status}
                                       </span>

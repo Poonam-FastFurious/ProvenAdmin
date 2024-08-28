@@ -169,7 +169,7 @@ function Header() {
                     </Link>
                   </div>
                 </div>
-                <div
+                {/* <div
                   className="dropdown topbar-head-dropdown ms-1 header-item"
                   id="notificationDropdown"
                 >
@@ -183,7 +183,7 @@ function Header() {
                       3<span className="visually-hidden">unread messages</span>
                     </span>
                   </button>
-                </div>
+                </div> */}
 
                 <div className="dropdown ms-sm-3 header-item topbar-user">
                   <button
@@ -223,12 +223,12 @@ function Header() {
                     </Link>
 
                     <div className="dropdown-divider"></div>
-                    <Link className="dropdown-item" to="/pages-profile">
+                    {/* <Link className="dropdown-item" to="/pages-profile">
                       <i className="mdi mdi-wallet text-muted fs-16 align-middle me-1"></i>
                       <span className="align-middle">
                         Balance : <b>$646464.67</b>
                       </span>
-                    </Link>
+                    </Link> */}
                     <Link className="dropdown-item" to="/Profile">
                       <span className="badge bg-success-subtle text-success mt-1 float-end">
                         New
