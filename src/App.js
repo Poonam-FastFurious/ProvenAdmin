@@ -23,8 +23,6 @@ import Team from "./Componnets/Team/Team";
 import Profile from "./Componnets/SiteSetting/Profile";
 import Coupon from "./Componnets/GenralSetting/Coupon";
 import Shipping from "./Componnets/GenralSetting/ShipingCharg";
-// import SubCategory from "./Componnets/Category/SubCategory";
-// import Addon from "./Componnets/Category/Addon";
 import Section2 from "./Componnets/GenralSetting/Banners/Section2";
 import Section3 from "./Componnets/GenralSetting/Banners/Section3";
 import Section4 from "./Componnets/GenralSetting/Banners/Section4";
@@ -74,10 +72,7 @@ function App() {
             <Route path="/Product/:id" element={<ProductDetail />} />
             <Route path="/EditProduct/:id" element={<EditProduct />} />
             <Route path="/AddProduct" element={<AddProduct />}></Route>
-
             <Route path="/Categories" element={<Category />}></Route>
-            {/* <Route path="/SubCategory" element={<SubCategory />}></Route> */}
-            {/* <Route path="/AddOns" element={<Addon />}></Route> */}
             <Route path="/Order" element={<OrderList />}></Route>
             <Route path="/order/:id" element={<OrderDetail />}></Route>
             <Route path="/transaction" element={<Transaction />}></Route>
@@ -103,7 +98,6 @@ function App() {
             <Route path="/Empolyerole" element={<Employeerol />}></Route>
             <Route path="/Testimonial" element={<Testimonial />}></Route>
             <Route path="/review" element={<Review />}></Route>
-
             <Route
               path="/pages-term-conditions"
               element={<Termsandcondition />}

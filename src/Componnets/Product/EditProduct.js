@@ -11,14 +11,17 @@ function EditProduct() {
   const navigate = useNavigate();
   const [category, setCategory] = useState([]);
   const [error, setError] = useState("");
-
   const [productData, setProductData] = useState(null);
   const [description, setDescription] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
   const [thumbnailPreviews, setThumbnailPreviews] = useState([]);
+  const [bannerPreviews, setBannerPreviews] = useState([]);
   const [discount, setDiscount] = useState(); // State for calculated discount
   const [price, setPrice] = useState();
   const [cutPrice, setCutPrice] = useState();
+  const [flipkarturl, setFlipkarturl] = useState("");
+  const [amazonurl, setAmazonurl] = useState("");
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     fetch(Baseurl + "/api/v1/category/allcategory")
       .then((response) => response.json())
@@ -36,6 +39,9 @@ function EditProduct() {
           setDescription(product.description || "");
           setImagePreview(product.image || null);
           setThumbnailPreviews(product.thumbnail || []);
+          setFlipkarturl(product.flipkarturl || ""); // Set flipkarturl
+          setAmazonurl(product.amazonurl || ""); // Set amazonurl
+          setBannerPreviews(product.banners || []);
         }
       })
       .catch((error) => {
@@ -85,6 +91,11 @@ function EditProduct() {
       img.src = URL.createObjectURL(file);
     });
   };
+  const handleBannerChange = (event) => {
+    const files = Array.from(event.target.files);
+    const previews = files.map((file) => URL.createObjectURL(file)); // Create object URLs for preview
+    setBannerPreviews(previews);
+  };
   const calculateDiscount = (price, cutPrice) => {
     const calculatedDiscount =
       cutPrice > 0 ? ((cutPrice - price) / cutPrice) * 100 : 0;
@@ -105,7 +116,7 @@ function EditProduct() {
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
-
+    setLoading(true);
     const formData = new FormData();
     formData.append("id", productData._id);
     formData.append("title", event.target.title?.value || "");
@@ -123,7 +134,8 @@ function EditProduct() {
     );
     formData.append("cutPrice", cutPrice);
     formData.append("categories", event.target.categories?.value || "");
-
+    formData.append("amazonurl", amazonurl);
+    formData.append("flipkarturl", flipkarturl);
     const imageInput = document.getElementById("product-image-input");
     if (imageInput.files.length > 0) {
       formData.append("image", imageInput.files[0]);
@@ -132,6 +144,10 @@ function EditProduct() {
     const thumbnailInput = document.getElementById("product-thumbnail-input");
     for (let i = 0; i < thumbnailInput.files.length; i++) {
       formData.append("thumbnail", thumbnailInput.files[i]);
+    }
+    const bannerInput = document.getElementById("product-banner-input");
+    for (let i = 0; i < bannerInput.files.length; i++) {
+      formData.append("banners", bannerInput.files[i]); // Append each banner file
     }
 
     axios
@@ -153,10 +169,11 @@ function EditProduct() {
               navigate("/Product");
             },
           });
-        }
+        } setLoading(false); 
       })
       .catch((error) => {
         console.error("There was an error updating the product!", error);
+        setLoading(false); 
       });
   };
 
@@ -391,22 +408,110 @@ function EditProduct() {
                           </ul>
                         )}
                       </div>
+                      <div className="mb-4">
+                        <h5 className="fs-14 mb-1">Product Banners</h5>
+                        <p className="text-muted">Add Product Banners.</p>
+                        <div className="text-center">
+                          <div className="position-relative d-inline-block">
+                            <div className="position-absolute top-100 start-100 translate-middle">
+                              <label
+                                htmlFor="product-banner-input"
+                                className="mb-0"
+                                data-bs-toggle="tooltip"
+                                data-bs-placement="right"
+                                title="Select Image"
+                              >
+                                <div className="avatar-xs">
+                                  <div className="avatar-title bg-light border rounded-circle text-muted cursor-pointer">
+                                    <i className="ri-image-fill"></i>
+                                  </div>
+                                </div>
+                              </label>
+                              <input
+                                className="form-control  d-none"
+                                id="product-banner-input"
+                                type="file"
+                                multiple
+                                onChange={handleBannerChange}
+                              />{" "}
+                              {error && (
+                                <div style={{ color: "red" }}>{error}</div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        {productData.banners.length > 0 && (
+                          <ul
+                            className="list-unstyled mb-0  d-flex"
+                            id="gallery-preview"
+                          >
+                            {bannerPreviews.map((file, index) => (
+                              <li
+                                key={index}
+                                className="mt-2"
+                                id="gallery-preview-list"
+                              >
+                                <div className="border rounded">
+                                  <div className="d-flex p-2">
+                                    <img
+                                      src={file}
+                                      alt={`Thumbnail ${index}`}
+                                      style={{ width: "100px", height: "auto" }}
+                                    />
+                                  </div>
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
                     </div>
                   </div>
                   <div className="card">
                     <div className="card-header">
-                      <h5 className="card-title mb-0">Product VideoUrl</h5>
+                      <h5 className="card-title mb-0">Product Link</h5>
                     </div>
                     <div className="card-body">
-                      <div className="hstack gap-3 align-items-start">
-                        <div className="flex-grow-1">
-                          <input
-                            className={`form-control `}
-                            placeholder="Enter Url"
-                            type="text"
-                            name="youtubeVideoLink"
-                            defaultValue={productData.youtubeVideoLink}
-                          />
+                     
+                      <div className="row">
+                        <div className="col-lg-3 col-sm-6">
+                          <div className="mb-3">
+                            <label className="form-label">VideoUrl </label>
+                            <input
+                              className={`form-control `}
+                              placeholder="Enter Url"
+                              type="text"
+                              name="youtubeVideoLink"
+                              defaultValue={productData.youtubeVideoLink}
+                            />
+                          </div>
+                        </div>
+                        <div className="col-lg-3 col-sm-6">
+                          <div className="mb-3">
+                            <label className="form-label">Flipkart Link</label>
+                            <input
+                              type="text"
+                              className={`form-control `}
+                              placeholder="Enter flipkarturl"
+                              name="flipkarturl"
+                              defaultValue={productData.flipkarturl}
+                              onChange={(e) => setFlipkarturl(e.target.value)}
+
+                            />
+                          </div>
+                        </div>
+                        <div className="col-lg-3 col-sm-6">
+                          <div className="mb-3">
+                            <label className="form-label">Amazon Link</label>
+                            <input
+                              type="text"
+                              className={`form-control `}
+                              placeholder="Enter tags"
+                              name="amazonurl"
+                              defaultValue={productData.amazonurl}
+                              onChange={(e) => setAmazonurl(e.target.value)}
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -574,7 +679,7 @@ function EditProduct() {
 
                   <div className="text-start mb-3">
                     <button type="submit" className="btn btn-success w-sm">
-                      submit
+                    {loading ? "Submitting..." : "Submit"}
                     </button>
                   </div>
                 </div>
