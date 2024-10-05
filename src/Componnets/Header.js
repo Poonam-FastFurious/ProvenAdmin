@@ -586,6 +586,14 @@ function Header() {
                         >
                           Profile
                         </Link>
+                      </li><li className="nav-item">
+                        <Link
+                          to="/StoreLocation"
+                          className="nav-link"
+                          data-key="t-sweet-alerts"
+                        >
+                          StoreLocation
+                        </Link>
                       </li>
 
                       <li className="nav-item">
