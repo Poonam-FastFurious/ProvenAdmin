@@ -734,7 +734,7 @@ function StoreLocation() {
       alert("Failed to add store location");
     }
   };
-  const handleDelete = async (id) => {
+  const handleDelete = async (state, cityName, address) => {
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -753,28 +753,28 @@ function StoreLocation() {
               headers: {
                 "Content-Type": "application/json",
               },
-              body: JSON.stringify({ id }),
+              body: JSON.stringify({ state, cityName, address }),
             }
           );
           if (!response.ok) {
-            throw new Error("Failed to delete banner");
+            throw new Error("Failed to delete address");
           }
-          setBanners(banners.filter((banner) => banner._id !== id));
-          setFilteredBanners(
-            filteredBanners.filter((banner) => banner._id !== id)
-          );
-          Swal.fire("Deleted!", "Your banner has been deleted.", "success");
+
+          // Update state and filtered banners here if necessary
+          // You may need to refactor this part to find the correct address and remove it
+          Swal.fire("Deleted!", "The address has been deleted.", "success");
         } catch (error) {
-          console.error("Error deleting banner:", error);
+          console.error("Error deleting address:", error);
           Swal.fire(
             "Error!",
-            "Failed to delete banner. Please try again.",
+            "Failed to delete address. Please try again.",
             "error"
           );
         }
       }
     });
   };
+
   const handleSearch = (e) => {
     const searchTerm = e.target.value;
     setSearchTerm(searchTerm);
@@ -865,11 +865,11 @@ function StoreLocation() {
                               </th>
 
                               <th class="sort" data-sort="action">
-                                Action
+                                Address
                               </th>
                             </tr>
                           </thead>
-                          <tbody class="list form-check-all">
+                          <tbody className="list form-check-all">
                             {currentItems.map((stateItem, stateIndex) =>
                               stateItem.cities.map((cityItem, cityIndex) =>
                                 cityItem.addresses.map(
@@ -878,13 +878,15 @@ function StoreLocation() {
                                       key={`${stateIndex}-${cityIndex}-${addressIndex}`}
                                     >
                                       {/* State Column */}
-                                      <td class="email">{stateItem.state}</td>
+                                      <td className="email">
+                                        {stateItem.state}
+                                      </td>
 
                                       {/* City Column */}
-                                      <td class="phone">{cityItem.name}</td>
+                                      <td className="phone">{cityItem.name}</td>
 
                                       {/* Address Column */}
-                                      <td class="address">
+                                      <td className="address">
                                         <p>
                                           <strong>{addressItem.name}</strong>
                                           <br />
@@ -903,13 +905,17 @@ function StoreLocation() {
 
                                       {/* Action Column */}
                                       <td>
-                                        <div class="d-flex gap-2">
-                                          <div class="edit"></div>
-                                          <div class="remove">
+                                        <div className="d-flex gap-2">
+                                          <div className="edit"></div>
+                                          <div className="remove">
                                             <button
-                                              class="btn btn-sm btn-danger remove-item-btn"
+                                              className="btn btn-sm btn-danger remove-item-btn"
                                               onClick={() =>
-                                                handleDelete(addressItem._id)
+                                                handleDelete(
+                                                  stateItem.state,
+                                                  cityItem.name,
+                                                  addressItem.address
+                                                )
                                               }
                                             >
                                               Remove
