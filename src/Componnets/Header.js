@@ -605,6 +605,15 @@ function Header() {
                           Enquiries
                         </Link>
                       </li>
+                      <li className="nav-item">
+                        <Link
+                          to="/SearchData"
+                          className="nav-link"
+                          data-key="t-sweet-alerts"
+                        >
+                          SearchData
+                        </Link>
+                      </li>
                     </ul>
                   </div>
                 </li>

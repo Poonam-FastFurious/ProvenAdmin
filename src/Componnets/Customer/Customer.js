@@ -18,8 +18,9 @@ function Customer() {
     fetch(Baseurl + "/api/v1/user/alluser")
       .then((response) => response.json())
       .then((data) => {
-        setUsers(data.data);
-        setFilteredUsers(data.data);
+        const verifiedUsers = data.data.filter((user) => user.isVerified === true);
+        setUsers(verifiedUsers);
+        setFilteredUsers(verifiedUsers);
       })
       .catch((error) => console.error("Error fetching users:", error));
   }, []);
@@ -183,7 +184,7 @@ function Customer() {
                                     {user.fullName}
                                   </td>
                                   <td className="email">{user.email}</td>
-                                  <td className="phone">{user.phone}</td>
+                                  <td className="phone">{user.mobile}</td>
                                   <td className="date">
                                     {new Date(
                                       user.createdAt

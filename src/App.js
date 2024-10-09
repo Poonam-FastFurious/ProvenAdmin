@@ -47,6 +47,7 @@ import Lockscreen from "./Componnets/SiteSetting/Lockscreen";
 import ForgotPassword from "./Componnets/Authentication/ForgotPassword";
 import Resetpassword from "./Componnets/Authentication/Resetpassword";
 import StoreLocation from "./Componnets/SiteSetting/StoreLocation";
+import Searchdata from "./Componnets/GenralSetting/Searchdata";
 function App() {
   return (
     <>
@@ -97,6 +98,7 @@ function App() {
             <Route path="/Addblogs" element={<Addblogs />}></Route>
             <Route path="/Editblog/:id" element={<EditBlogs />}></Route>
             <Route path="/InquiryList" element={<Inquiry />}></Route>
+            <Route path="/SearchData" element={<Searchdata />}></Route>
             <Route path="/Empolyerole" element={<Employeerol />}></Route>
             <Route path="/Testimonial" element={<Testimonial />}></Route>
             <Route path="/review" element={<Review />}></Route>

@@ -747,7 +747,7 @@ function StoreLocation() {
       if (result.isConfirmed) {
         try {
           const response = await fetch(
-            `http://localhost:3000/api/v1/Storelocation/delete`,
+            `${Baseurl}/api/v1/Storelocation/delete`,
             {
               method: "DELETE",
               headers: {
@@ -870,39 +870,58 @@ function StoreLocation() {
                             </tr>
                           </thead>
                           <tbody class="list form-check-all">
-                            {currentItems.map((item, index) => (
-                              <tr key={index}>
-                                <td class="email">{item.state}</td>
-
-                                <td class="phone">
-                                  {item.cities.map((city, index) => (
-                                    <div
-                                      key={index}
-                                      style={{
-                                        display: "flex",
-                                        flexDirection: "col",
-                                      }}
+                            {currentItems.map((stateItem, stateIndex) =>
+                              stateItem.cities.map((cityItem, cityIndex) =>
+                                cityItem.addresses.map(
+                                  (addressItem, addressIndex) => (
+                                    <tr
+                                      key={`${stateIndex}-${cityIndex}-${addressIndex}`}
                                     >
-                                      <p>{city.name} ({city.addresses.length})</p>
-                                    </div>
-                                  ))}
-                                </td>
+                                      {/* State Column */}
+                                      <td class="email">{stateItem.state}</td>
 
-                                <td>
-                                  <div class="d-flex gap-2">
-                                    <div class="edit"></div>
-                                    <div class="remove">
-                                      <button
-                                        class="btn btn-sm btn-danger remove-item-btn"
-                                        onClick={() => handleDelete(item._id)}
-                                      >
-                                        Remove
-                                      </button>
-                                    </div>
-                                  </div>
-                                </td>
-                              </tr>
-                            ))}
+                                      {/* City Column */}
+                                      <td class="phone">{cityItem.name}</td>
+
+                                      {/* Address Column */}
+                                      <td class="address">
+                                        <p>
+                                          <strong>{addressItem.name}</strong>
+                                          <br />
+                                          Phone: {addressItem.phone}
+                                          <br />
+                                          {addressItem.alternatePhone && (
+                                            <>
+                                              Alternate Phone:{" "}
+                                              {addressItem.alternatePhone}
+                                              <br />
+                                            </>
+                                          )}
+                                          Address: {addressItem.address}
+                                        </p>
+                                      </td>
+
+                                      {/* Action Column */}
+                                      <td>
+                                        <div class="d-flex gap-2">
+                                          <div class="edit"></div>
+                                          <div class="remove">
+                                            <button
+                                              class="btn btn-sm btn-danger remove-item-btn"
+                                              onClick={() =>
+                                                handleDelete(addressItem._id)
+                                              }
+                                            >
+                                              Remove
+                                            </button>
+                                          </div>
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  )
+                                )
+                              )
+                            )}
                           </tbody>
                         </table>
                         {filteredBanners.length === 0 && (

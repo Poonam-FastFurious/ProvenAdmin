@@ -14,15 +14,19 @@ function Dashboard() {
   useEffect(() => {
     // Fetch data from both APIs
     Promise.all([
-      fetch(Baseurl + "/api/v1/Product/products").then(response => response.json()),
-      fetch(Baseurl + "/api/v1/order/total-payments").then(response => response.json())
+      fetch(Baseurl + "/api/v1/Product/products").then((response) =>
+        response.json()
+      ),
+      fetch(Baseurl + "/api/v1/order/total-payments").then((response) =>
+        response.json()
+      ),
     ])
       .then(([productsData, paymentsData]) => {
         setProducts(productsData.data);
         setTotalPayments(paymentsData.totalAmount);
       })
-      .catch(error => {
-        console.error('Error fetching data:', error);
+      .catch((error) => {
+        console.error("Error fetching data:", error);
       });
   }, []);
   useEffect(() => {
@@ -37,7 +41,9 @@ function Dashboard() {
         }
         const data = await response.json();
         // Sort orders by date descending
-        const sortedOrders = data.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        const sortedOrders = data.data.sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
         setOrders(sortedOrders);
         setOrdersCount(sortedOrders.length);
 
@@ -48,7 +54,9 @@ function Dashboard() {
         }
         const userData = await responseuser.json();
         // Sort users by date descending
-        const sortedUsers = userData.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        const sortedUsers = userData.data.sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
         setUser(sortedUsers);
         setusercount(sortedUsers.length);
       } catch (err) {
@@ -78,7 +86,6 @@ function Dashboard() {
                             Here's what's happening with your store today.
                           </p>
                         </div>
-
                       </div>
                     </div>
                   </div>
@@ -104,7 +111,6 @@ function Dashboard() {
                                 >
                                   {totalPayments}
                                 </span>
-
                               </h4>
                               <Link
                                 to=""
@@ -183,7 +189,6 @@ function Dashboard() {
                                 >
                                   {usercount}
                                 </span>
-
                               </h4>
                               <Link
                                 to=""
@@ -224,7 +229,6 @@ function Dashboard() {
                                 >
                                   0
                                 </span>
-
                               </h4>
                               <Link
                                 to=""
@@ -282,11 +286,11 @@ function Dashboard() {
                                       <div className="d-flex align-items-center">
                                         <div className="flex-shrink-0 me-2"></div>
                                         <div className="flex-grow-1">
-                                          {order.customer.fullName}
+                                          {order.customer?.fullName}
                                         </div>
                                       </div>
                                     </td>
-                                    <td>{order.customer.fullName}</td>
+                                    <td>{order.customer?.fullName}</td>
                                     <td>
                                       <span className="text-success">
                                         Rs{order.totalAmount}
@@ -294,12 +298,13 @@ function Dashboard() {
                                     </td>
                                     <td>
                                       <span
-                                        className={`badge ${order.paymentStatus === "Paid"
-                                          ? "bg-success-subtle text-success"
-                                          : order.paymentStatus === "Pending"
+                                        className={`badge ${
+                                          order.paymentStatus === "Paid"
+                                            ? "bg-success-subtle text-success"
+                                            : order.paymentStatus === "Pending"
                                             ? "bg-warning-subtle text-warning"
                                             : "bg-danger-subtle text-danger"
-                                          }`}
+                                        }`}
                                       >
                                         {order.status}
                                       </span>
